@@ -1,7 +1,7 @@
 provider "aws" {
-  access_key = "AKIAVCWMH3LZIURBV6W7"
-  secret_key = "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"
-  region     = "us-east-2"
+  access_key = "TF_VAR_access_key"
+  secret_key = "TF_VAR_secret_key"
+  region     = "TF_VAR_region"
 }
 
 
