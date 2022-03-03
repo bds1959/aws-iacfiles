@@ -1,4 +1,4 @@
 policy "bridgecrew" {
-        source            = "/"
+        source            = "aws-iacfiles/sentinel.hcl"
         enforcement_level = "hard-mandatory"
 }
