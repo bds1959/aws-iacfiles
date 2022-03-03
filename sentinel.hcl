@@ -1,4 +1,4 @@
 policy "bridgecrew" {
-        source            = "."
+        source            = "/"
         enforcement_level = "hard-mandatory"
 }
