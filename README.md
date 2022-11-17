@@ -1,3 +1,1 @@
 # aws-iacfiles
-sdtyg
-xf
