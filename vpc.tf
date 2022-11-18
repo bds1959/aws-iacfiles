@@ -250,4 +250,3 @@ resource "aws_security_group" "petdb"{
 #    Name = "petdb"
 #  }
 }
-
