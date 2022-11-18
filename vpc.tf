@@ -1,7 +1,7 @@
 #fassfd
 provider "aws" {
-  access_key = "gwdfafweg"
-  secret_key = "+egewgvwgv"
+  access_key = "gwfweg"
+  secret_key = "+egewgv"
   region     = "us-east-1"
 }
 
