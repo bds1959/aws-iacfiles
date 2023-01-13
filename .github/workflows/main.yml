@@ -23,7 +23,7 @@ jobs:
           commit-message: npm publish - open PR - added tag
           title: npm publish - open PR
           body: npm publish - open PR
-          base: main
+          base: master
           labels: automated-pr, npm publish
           branch: deploy
           delete-branch: true
