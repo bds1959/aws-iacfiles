@@ -26,7 +26,7 @@ jobs:
           base: master
           labels: automated-pr, npm publish
           branch: deploy
-          delete-branch: true
+#           delete-branch: true
       # auto approve PR
       - name: Auto approve
         uses: juliangruber/approve-pull-request-action@v1
