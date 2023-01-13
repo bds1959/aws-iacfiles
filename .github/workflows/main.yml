@@ -13,8 +13,8 @@ jobs:
       # Configure Git
       - name: Git configuration
         run: |
-          git config --global user.email "pradeep@banyancloud.io"
-          git config --global user.name "PDP-Banyan"
+          git config --global user.email "bds1959@banyancloud.io"
+          git config --global user.name "bds1959"
       # Open PR
       - name: Create Pull Request
         id: npm-publish
@@ -25,19 +25,19 @@ jobs:
           body: npm publish - open PR
           base: main
           labels: automated-pr, npm publish
-          branch: actions
+          branch: deploy
           delete-branch: true
       # auto approve PR
       - name: Auto approve
         uses: juliangruber/approve-pull-request-action@v1
         with:
-          github-token: ${{ secrets.PDP_ACC }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           number: ${{ steps.npm-publish.outputs.pull-request-number }}
       # auto merge PR
       - name: Auto merge PR
         uses: juliangruber/merge-pull-request-action@v1
         with:
-          github-token: ${{ secrets.PDP_ACC }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           number: ${{ steps.npm-publish.outputs.pull-request-number }}
           method: squash
 
