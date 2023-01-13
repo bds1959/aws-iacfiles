@@ -4,26 +4,40 @@ on:
     branches:
       - deploy
 jobs:
-  create_pull_request:
+  release:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-      name: checkout
-
-    - name: Create pull request
-      id: create_pull_request
-      uses: actions/create-pull-request
-      with:
-        title: 'Auto Pull Request'
-        head: deploy
-        base: main
-        labels: 'auto-merge'
-        approve: true
-
-    - name: Merge pull request
-      if: steps.create_pull_request.outputs.pull_request_number
-      uses: actions/merge-pull-request
-      with:
-        pull_request_number: ${{ steps.create_pull_request.outputs.pull_request_number }}
-        commit-message: 'Auto merge'
+      # Checkout project repository
+      - name: Checkout
+        uses: actions/checkout@v2.3.4
+      # Configure Git
+      - name: Git configuration
+        run: |
+          git config --global user.email "pradeep@banyancloud.io"
+          git config --global user.name "PDP-Banyan"
+      # Open PR
+      - name: Create Pull Request
+        id: npm-publish
+        uses: peter-evans/create-pull-request@v4
+        with:
+          commit-message: npm publish - open PR - added tag
+          title: npm publish - open PR
+          body: npm publish - open PR
+          base: main
+          labels: automated-pr, npm publish
+          branch: actions
+          delete-branch: true
+      # auto approve PR
+      - name: Auto approve
+        uses: juliangruber/approve-pull-request-action@v1
+        with:
+          github-token: ${{ secrets.PDP_ACC }}
+          number: ${{ steps.npm-publish.outputs.pull-request-number }}
+      # auto merge PR
+      - name: Auto merge PR
+        uses: juliangruber/merge-pull-request-action@v1
+        with:
+          github-token: ${{ secrets.PDP_ACC }}
+          number: ${{ steps.npm-publish.outputs.pull-request-number }}
+          method: squash
 
