@@ -15,6 +15,9 @@ jobs:
         run: |
           git config --global user.email "murali@banyancloud.io"
           git config --global user.name "bds1959"
+      # Commit changes
+      - name: pull branch
+        run: git pull
       # Open PR
       - name: Create Pull Request
         id: npm-publish
