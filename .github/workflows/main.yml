@@ -2,7 +2,7 @@ name: auto-open-pr
 on:
   push:
     branches:
-      - deploy
+      - action
 jobs:
   release:
     runs-on: ubuntu-latest
