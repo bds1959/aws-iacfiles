@@ -17,4 +17,4 @@ jobs:
 
       - name: Check branch
         run: |
-          echo "Pull request made to master branch from deploy. Proceed with desired actions.
+          echo "Pull request made to master branch from deploy. Proceed with desired actions."
