@@ -1,0 +1,20 @@
+name: 'Check Branch'
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  check_branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check source branch
+        if: github.base_ref == 'master' && github.head_ref != 'deploy'
+        run: |
+          echo "ERROR: You can only merge to main from develop branch."
+          exit 1
+
+      - name: Check branch
+        run: |
+          echo "Pull request made to master branch from develop. Proceed with desired actions.
