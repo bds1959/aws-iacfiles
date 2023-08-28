@@ -91,12 +91,23 @@ jobs:
             fi
           fi
 
-      - name: Create GitHub Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Create GitHub Release
+      #   id: create_release
+      #   uses: actions/create-release@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     tag_name: ${{ env.NEW_TAG_WITH_V }}
+      #     release_name: Release ${{ env.NEW_TAG_WITH_V }}
+      #     body: ${{ env.CHANGELOG }}
+          
+      # Update GitHub release with changelog
+      - name: Update GitHub release documentation
+        uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ env.NEW_TAG_WITH_V }}
-          release_name: Release ${{ env.NEW_TAG_WITH_V }}
           body: ${{ env.CHANGELOG }}
+          prerelease: ${{ startsWith(github.event.inputs.release-type, 'pre') }}
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
