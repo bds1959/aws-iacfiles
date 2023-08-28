@@ -44,7 +44,8 @@ jobs:
         id: get_prev_tag
         run: |
           if [ "$PR_MERGED" == "true" ]; then
-            PREV_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+            TAGS=$(git tag -l)
+            PREV_TAG=$(echo "$TAGS" | sort -V | tail -1 || echo "0.0.0")
             echo "$PREV_TAG"
             if [ -z "$PREV_TAG" ]; then
               PREV_TAG="1.0.0"
