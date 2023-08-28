@@ -51,26 +51,39 @@ jobs:
             # Remove 'v' prefix if it exists
             PREV_TAG=${PREV_TAG#"v"}
             echo "PREV_TAG=$PREV_TAG" >> $GITHUB_ENV
+            PREV_TAG_WITH_V="v$PREV_TAG"
+            echo "PREV_TAG_WITH_V=$PREV_TAG_WITH_V" >> $GITHUB_ENV
           fi
 
       - name: Create and push new tag
         id: create_tag
         run: |
           if [ "$PR_MERGED" == "true" ]; then
-            NEW_TAG=$(semver bump $TAG_TYPE $PREV_TAG)
-            NEW_TAG_WITH_V="v$NEW_TAG"
-            echo "NEW_TAG_WITH_V=$NEW_TAG_WITH_V" >> $GITHUB_ENV
-            git tag $NEW_TAG_WITH_V
-            git push origin $NEW_TAG_WITH_V
+            if [ -z "$PREV_TAG" ]; then
+              git tag v1.0.0
+              git push origin v1.0.0
+            else
+              NEW_TAG=$(semver -i $TAG_TYPE $PREV_TAG)
+              NEW_TAG_WITH_V="v$NEW_TAG"
+              echo "NEW_TAG_WITH_V=$NEW_TAG_WITH_V" >> $GITHUB_ENV
+              git tag $NEW_TAG_WITH_V
+              git push origin $NEW_TAG_WITH_V
+            fi
           fi
 
       - name: Generate release notes
         id: release_notes
         run: |
           if [ "$PR_MERGED" == "true" ]; then
-            RELEASE_NOTES=$(git log --pretty=format:"- %s by %an in #%H%n" --abbrev-commit $PREV_TAG..$NEW_TAG_WITH_V)
-            CHANGELOG="## What's Changed%n$RELEASE_NOTES%n%n**Full Changelog**: https://github.com/${{ github.repository }}/compare/$PREV_TAG...$NEW_TAG_WITH_V"
-            echo "CHANGELOG=$CHANGELOG" >> $GITHUB_ENV
+            if [ -z "$PREV_TAG" ]; then
+              RELEASE_NOTES=$(git log --pretty=format:"- %s by %an in #%H%n" --abbrev-commit v1.0.0)
+              CHANGELOG="## What's Changed%n$RELEASE_NOTES%n%n**Full Changelog**: https://github.com/${{ github.repository }}/compare/v1.0.0"
+              echo "CHANGELOG=$CHANGELOG" >> $GITHUB_ENV
+            else
+              RELEASE_NOTES=$(git log --pretty=format:"- %s by %an in #%H%n" --abbrev-commit $PREV_TAG_WITH_V..$NEW_TAG_WITH_V)
+              CHANGELOG="## What's Changed%n$RELEASE_NOTES%n%n**Full Changelog**: https://github.com/${{ github.repository }}/compare/$PREV_TAG_WITH_V...$NEW_TAG_WITH_V"
+              echo "CHANGELOG=$CHANGELOG" >> $GITHUB_ENV
+            fi
           fi
 
       - name: Create GitHub Release
