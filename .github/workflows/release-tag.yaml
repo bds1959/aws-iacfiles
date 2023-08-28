@@ -8,6 +8,16 @@ jobs:
   create_release:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2.3.4
+      # Configure Git
+      - name: Git configuration
+        run: |
+          git config --global user.email "murali@banyancloud.io"
+          git config --global user.name "bds1959"
+      # Commit changes
+      - name: pull branch
+        run: git pull
       - name: Install semver
         run: npm install --global semver
       - name: Check if PR was merged to master
