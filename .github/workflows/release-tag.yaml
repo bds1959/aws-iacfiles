@@ -85,8 +85,8 @@ jobs:
               # RELEASE_NOTES=$(git log --pretty=format:"- %s by %an in #%H%n" --abbrev-commit $PREV_TAG_WITH_V..$NEW_TAG_WITH_V)
               # CHANGELOG="## What's Changed%n$RELEASE_NOTES%n%n**Full Changelog**: https://github.com/${{ github.repository }}/compare/$PREV_TAG_WITH_V...$NEW_TAG_WITH_V"
               # echo "CHANGELOG=$CHANGELOG" >> $GITHUB_ENV
-              RELEASE_NOTES=$(git log --pretty=format:"%n- %s by @%an in #%H" --abbrev-commit $PREV_TAG..HEAD)
-              CHANGELOG="What's Changed%n%n$RELEASE_NOTES%n%nFull Changelog: v$PREV_TAG...${{ env.NEW_TAG }}"
+              RELEASE_NOTES=$(git log --pretty=format:"%n- %s by @%an in #%H" --abbrev-commit $PREV_TAG_WITH_V..$NEW_TAG_WITH_V)
+              CHANGELOG="What's Changed%n%n$RELEASE_NOTES%n%nFull Changelog: $PREV_TAG_WITH_V..$NEW_TAG_WITH_V"
               echo "CHANGELOG=$CHANGELOG" >> $GITHUB_ENV
             fi
           fi
