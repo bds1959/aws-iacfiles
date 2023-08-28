@@ -1,0 +1,74 @@
+name: Create Release Tag and Notes
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  create_release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install semver
+        run: npm install --global semver
+      - name: Check if PR was merged to master
+        id: pr_check
+        run: |
+          if [[ "${{ github.event.pull_request.merged }}" == "true" && "${{ github.event.pull_request.base.ref }}" == "master" ]]; then
+            echo "PR_MERGED=true" >> $GITHUB_ENV
+          fi
+      - name: Set tag type based on labels
+        id: set_tag_type
+        run: |
+          if [ "$PR_MERGED" == "true" ]; then
+            LABELS=$(jq -r '.pull_request.labels[].name' "$GITHUB_EVENT_PATH" 2>/dev/null || echo "")
+            if [[ "$LABELS" == *"major"* ]]; then
+              echo "TAG_TYPE=major" >> $GITHUB_ENV
+            elif [[ "$LABELS" == *"minor"* ]]; then
+              echo "TAG_TYPE=minor" >> $GITHUB_ENV
+            else
+              echo "TAG_TYPE=patch" >> $GITHUB_ENV
+            fi
+          fi
+
+      - name: Get previous tag
+        id: get_prev_tag
+        run: |
+          if [ "$PR_MERGED" == "true" ]; then
+            PREV_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+            if [ -z "$PREV_TAG" ]; then
+              PREV_TAG="1.0.0"
+            fi
+            # Remove 'v' prefix if it exists
+            PREV_TAG=${PREV_TAG#"v"}
+            echo "PREV_TAG=$PREV_TAG" >> $GITHUB_ENV
+          fi
+
+      - name: Create and push new tag
+        id: create_tag
+        run: |
+          if [ "$PR_MERGED" == "true" ]; then
+            NEW_TAG=$(semver bump $TAG_TYPE $PREV_TAG)
+            NEW_TAG_WITH_V="v$NEW_TAG"
+            echo "NEW_TAG_WITH_V=$NEW_TAG_WITH_V" >> $GITHUB_ENV
+            git tag $NEW_TAG_WITH_V
+            git push origin $NEW_TAG_WITH_V
+          fi
+
+      - name: Generate release notes
+        id: release_notes
+        run: |
+          if [ "$PR_MERGED" == "true" ]; then
+            RELEASE_NOTES=$(git log --pretty=format:"- %s by %an in #%H%n" --abbrev-commit $PREV_TAG..$NEW_TAG_WITH_V)
+            CHANGELOG="## What's Changed%n$RELEASE_NOTES%n%n**Full Changelog**: https://github.com/${{ github.repository }}/compare/$PREV_TAG...$NEW_TAG_WITH_V"
+            echo "CHANGELOG=$CHANGELOG" >> $GITHUB_ENV
+          fi
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.NEW_TAG_WITH_V }}
+          release_name: Release ${{ env.NEW_TAG_WITH_V }}
+          body: ${{ env.CHANGELOG }}
