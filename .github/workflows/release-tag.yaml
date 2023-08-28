@@ -32,7 +32,10 @@ jobs:
         id: get_prev_tag
         run: |
           if [ "$PR_MERGED" == "true" ]; then
-            PREV_TAG=$(git describe --tags --abbrev=0)
+            PREV_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+            if [ -z "$PREV_TAG" ]; then
+              PREV_TAG="1.0.0"
+            fi
             # Remove 'v' prefix if it exists
             PREV_TAG=${PREV_TAG#"v"}
             echo "PREV_TAG=$PREV_TAG" >> $GITHUB_ENV
