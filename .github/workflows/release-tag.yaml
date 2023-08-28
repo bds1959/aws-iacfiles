@@ -17,7 +17,7 @@ jobs:
           git config --global user.name "bds1959"
       # Commit changes
       - name: pull branch
-        run: git pull
+        run: git pull origin --tags
       - name: Install semver
         run: npm install --global semver
       - name: Check if PR was merged to master
