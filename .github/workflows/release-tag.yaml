@@ -8,6 +8,8 @@ jobs:
   create_release:
     runs-on: ubuntu-latest
     steps:
+      - name: Install semver
+        run: npm install --global semver
       - name: Check if PR was merged to master
         id: pr_check
         run: |
