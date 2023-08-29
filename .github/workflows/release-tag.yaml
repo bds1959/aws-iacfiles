@@ -78,36 +78,15 @@ jobs:
         run: |
           if [ "$PR_MERGED" == "true" ]; then
             if [ -z "$PREV_TAG" ]; then
-              RELEASE_NOTES=$(git log --pretty=format:"- %s by %an in #%H%n" --abbrev-commit v1.0.0)
-              CHANGELOG="## What's Changed%n$RELEASE_NOTES%n%n**Full Changelog**: https://github.com/${{ github.repository }}/compare/v1.0.0"
-              echo "CHANGELOG=$CHANGELOG" >> $GITHUB_ENV
-            else
-              # RELEASE_NOTES=$(git log --pretty=format:"- %s by %an in #%H%n" --abbrev-commit $PREV_TAG_WITH_V..$NEW_TAG_WITH_V)
-              # CHANGELOG="## What's Changed%n$RELEASE_NOTES%n%n**Full Changelog**: https://github.com/${{ github.repository }}/compare/$PREV_TAG_WITH_V...$NEW_TAG_WITH_V"
-              # echo "CHANGELOG=$CHANGELOG" >> $GITHUB_ENV
-              #RELEASE_NOTES=$(git log --pretty=format:"%n- %s by @%an in #%H" --abbrev-commit $PREV_TAG_WITH_V..$NEW_TAG_WITH_V)
-              # CHANGELOG="What's Changed%n%n$RELEASE_NOTES%n%nFull Changelog: $PREV_TAG_WITH_V..$NEW_TAG_WITH_V"
-              # echo "CHANGELOG=$CHANGELOG" >> $GITHUB_ENV
-
-              RELEASE_NOTES=$(git log --pretty=format:"- %s by %an in #%H%n" --abbrev-commit $PREV_TAG_WITH_V..$NEW_TAG_WITH_V)
-              CHANGELOG="## What's Changed\n$RELEASE_NOTES\n\n**Full Changelog**: https://github.com/bds1959/aws-iacfiles/compare/$PREV_TAG_WITH_V...$NEW_TAG_WITH_V"
-              #echo "CHANGELOG=$CHANGELOG" >> $GITHUB_ENV
               DATE=$(date +%Y-%m-%d)
-              VERSION_DATE="$NEW_TAG_WITH_V - $DATE"
-              FULL_CHANGELOG="$VERSION_DATE\n\n$CHANGELOG"
-              echo "CHANGELOG=$FULL_CHANGELOG" >> $GITHUB_ENV
+              VERSION_DATE="v1.0.0 - $DATE"
+              echo "CHANGELOG=$VERSION_DATE" >> $GITHUB_ENV
+            else
+              DATE=$(date +%Y-%m-%d)
+              VERSION_DATE="${{ env.NEW_TAG_WITH_V }} - $DATE"
+              echo "CHANGELOG=$VERSION_DATE" >> $GITHUB_ENV
             fi
           fi
-
-      # - name: Create GitHub Release
-      #   id: create_release
-      #   uses: actions/create-release@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     tag_name: ${{ env.NEW_TAG_WITH_V }}
-      #     release_name: Release ${{ env.NEW_TAG_WITH_V }}
-      #     body: ${{ env.CHANGELOG }}
           
       # Update GitHub release with changelog
       - name: Update GitHub release documentation
