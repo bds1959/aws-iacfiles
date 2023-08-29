@@ -91,7 +91,9 @@ jobs:
               DATE=$(date +%Y-%m-%d)
               VERSION_DATE="$NEW_TAG_WITH_V - $DATE"
               FULL_CHANGELOG="$VERSION_DATE%n%n$RELEASE_NOTES"
-              echo "CHANGELOG=$FULL_CHANGELOG" >> $GITHUB_ENV
+              #echo "CHANGELOG=$FULL_CHANGELOG" >> $GITHUB_ENV
+              echo "::set-env name=CHANGELOG::$FULL_CHANGELOG"
+
             fi
           fi
 
