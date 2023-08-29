@@ -85,15 +85,17 @@ jobs:
               # RELEASE_NOTES=$(git log --pretty=format:"- %s by %an in #%H%n" --abbrev-commit $PREV_TAG_WITH_V..$NEW_TAG_WITH_V)
               # CHANGELOG="## What's Changed%n$RELEASE_NOTES%n%n**Full Changelog**: https://github.com/${{ github.repository }}/compare/$PREV_TAG_WITH_V...$NEW_TAG_WITH_V"
               # echo "CHANGELOG=$CHANGELOG" >> $GITHUB_ENV
-              RELEASE_NOTES=$(git log --pretty=format:"%n- %s by @%an in #%H" --abbrev-commit $PREV_TAG_WITH_V..$NEW_TAG_WITH_V)
+              #RELEASE_NOTES=$(git log --pretty=format:"%n- %s by @%an in #%H" --abbrev-commit $PREV_TAG_WITH_V..$NEW_TAG_WITH_V)
               # CHANGELOG="What's Changed%n%n$RELEASE_NOTES%n%nFull Changelog: $PREV_TAG_WITH_V..$NEW_TAG_WITH_V"
               # echo "CHANGELOG=$CHANGELOG" >> $GITHUB_ENV
+
+              RELEASE_NOTES=$(git log --pretty=format:"- %s by %an in #%H%n" --abbrev-commit $PREV_TAG_WITH_V..$NEW_TAG_WITH_V)
+              CHANGELOG="## What's Changed\n$RELEASE_NOTES\n\n**Full Changelog**: https://github.com/bds1959/aws-iacfiles/compare/$PREV_TAG_WITH_V...$NEW_TAG_WITH_V"
+              #echo "CHANGELOG=$CHANGELOG" >> $GITHUB_ENV
               DATE=$(date +%Y-%m-%d)
               VERSION_DATE="$NEW_TAG_WITH_V - $DATE"
-              FULL_CHANGELOG="$VERSION_DATE%n%n$RELEASE_NOTES"
-              #echo "CHANGELOG=$FULL_CHANGELOG" >> $GITHUB_ENV
-              echo "::set-env name=CHANGELOG::$FULL_CHANGELOG"
-
+              FULL_CHANGELOG="$VERSION_DATE\n\n$CHANGELOG"
+              echo "CHANGELOG=$FULL_CHANGELOG" >> $GITHUB_ENV
             fi
           fi
 
