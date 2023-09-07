@@ -8,6 +8,18 @@ jobs:
   create_release:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2.3.4
+      # Configure Git
+      - name: Git configuration
+        run: |
+          git config --global user.email "murali@banyancloud.io"
+          git config --global user.name "bds1959"
+      # Commit changes
+      - name: pull branch
+        run: git pull origin --tags
+      - name: Install semver
+        run: npm install --global semver
       - name: Check if PR was merged to master
         id: pr_check
         run: |
@@ -32,41 +44,57 @@ jobs:
         id: get_prev_tag
         run: |
           if [ "$PR_MERGED" == "true" ]; then
-            PREV_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+            TAGS=$(git tag -l)
+            PREV_TAG=$(echo "$TAGS" | sort -V | tail -1 || echo "0.0.0")
+            echo "$PREV_TAG"
             if [ -z "$PREV_TAG" ]; then
               PREV_TAG="1.0.0"
             fi
             # Remove 'v' prefix if it exists
             PREV_TAG=${PREV_TAG#"v"}
             echo "PREV_TAG=$PREV_TAG" >> $GITHUB_ENV
+            PREV_TAG_WITH_V="v$PREV_TAG"
+            echo "PREV_TAG_WITH_V=$PREV_TAG_WITH_V" >> $GITHUB_ENV
           fi
 
       - name: Create and push new tag
         id: create_tag
         run: |
           if [ "$PR_MERGED" == "true" ]; then
-            NEW_TAG=$(semver bump $TAG_TYPE $PREV_TAG)
-            NEW_TAG_WITH_V="v$NEW_TAG"
-            echo "NEW_TAG_WITH_V=$NEW_TAG_WITH_V" >> $GITHUB_ENV
-            git tag $NEW_TAG_WITH_V
-            git push origin $NEW_TAG_WITH_V
+            if [ -z "$PREV_TAG" ]; then
+              git tag v1.0.0
+              git push origin v1.0.0
+            else
+              NEW_TAG=$(semver -i $TAG_TYPE $PREV_TAG)
+              NEW_TAG_WITH_V="v$NEW_TAG"
+              echo "NEW_TAG_WITH_V=$NEW_TAG_WITH_V" >> $GITHUB_ENV
+              git tag $NEW_TAG_WITH_V
+              git push origin $NEW_TAG_WITH_V
+            fi
           fi
 
       - name: Generate release notes
         id: release_notes
         run: |
           if [ "$PR_MERGED" == "true" ]; then
-            RELEASE_NOTES=$(git log --pretty=format:"- %s by %an in #%H%n" --abbrev-commit $PREV_TAG..$NEW_TAG_WITH_V)
-            CHANGELOG="## What's Changed%n$RELEASE_NOTES%n%n**Full Changelog**: https://github.com/${{ github.repository }}/compare/$PREV_TAG...$NEW_TAG_WITH_V"
-            echo "CHANGELOG=$CHANGELOG" >> $GITHUB_ENV
+            if [ -z "$PREV_TAG" ]; then
+              DATE=$(date +%Y-%m-%d)
+              VERSION_DATE="v1.0.0 - $DATE"
+              echo "CHANGELOG=$VERSION_DATE" >> $GITHUB_ENV
+            else
+              DATE=$(date +%Y-%m-%d)
+              VERSION_DATE="${{ env.NEW_TAG_WITH_V }} - $DATE"
+              echo "CHANGELOG=$VERSION_DATE" >> $GITHUB_ENV
+            fi
           fi
-
-      - name: Create GitHub Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      # Update GitHub release with changelog
+      - name: Update GitHub release documentation
+        uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ env.NEW_TAG_WITH_V }}
-          release_name: Release ${{ env.NEW_TAG_WITH_V }}
           body: ${{ env.CHANGELOG }}
+          prerelease: ${{ startsWith(github.event.inputs.release-type, 'pre') }}
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
