@@ -1,7 +1,11 @@
 provider "aws" {
   region     = "us-west-2"
 }
-
+  ingress{
+    from_port = 22
+    to_port = 22
+    cidr_blocks = ["10.0.0.1/16"]
+  }
 resource "aws_security_group" "ssh_traffic" {
   name        = "ssh_traffic"
   description = "Allow SSH inbound traffic"
