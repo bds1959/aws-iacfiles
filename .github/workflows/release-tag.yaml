@@ -1,6 +1,8 @@
 name: Create Release Tag and Notes
 on:
   pull_request:
+    branches:
+      - main
     types:
       - closed
 
