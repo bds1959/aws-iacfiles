@@ -33,6 +33,20 @@
   - [ ] No
   - [ ] Not Applicable
 
+- **Data Migration Required?**  
+  - [ ] Yes
+  - [ ] No
+  - [ ] Not Applicable
+  
+- **API Compatibility Check?**  
+  - [ ] Yes
+  - [ ] No
+  - [ ] Not Applicable
+
+- **Performance Impact Analysis:**  
+  - [ ] Conducted
+  - [ ] Not Conducted
+
 ## ADDITIONAL NOTES:
 
 - Any additional information or specific instructions related to this release can be added here.
