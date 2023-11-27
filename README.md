@@ -15,7 +15,18 @@
 
 ## BUGS:
 
-## Changes in Tables or any Schema Refresh required in Integration DBs: (if yes, please mention below in detail)
+## Changes in Tables or any Schema Refresh required in Integration DBs:
+
+- **Schema Refresh Required?**  
+  - [ ] Yes
+  - [ ] No
+
+  If Yes, please provide details:
+
+  - **Schema Name:**
+  - **Table(s) Name:**
+  - **Column(s) Name:**
+  - **Any Additional Details:**
 
 ## SCOPE OF IMPACT:
 
