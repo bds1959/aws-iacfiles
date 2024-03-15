@@ -37,7 +37,6 @@ resource "aws_instance" "web_server_instance" {
     git_modifiers        = "murali"
     git_org              = "bds1959"
     git_repo             = "terragoat"
-    yor_trace            = "0a64290e-f8a7-432e-925f-beb407a5da08"
   }
 }
 
