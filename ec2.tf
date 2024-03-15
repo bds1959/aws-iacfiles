@@ -35,8 +35,6 @@ resource "aws_instance" "web_server_instance" {
     git_last_modified_at = "2021-10-12 04:05:55"
     git_last_modified_by = "murali@banyandata.com"
     git_modifiers        = "murali"
-    git_org              = "bds1959"
-    git_repo             = "terragoat"
   }
 }
 
